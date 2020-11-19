@@ -16,22 +16,8 @@ get_fema_data <- function(entity, base_url = "https://www.fema.gov/api/open", ap
     api_params <- check_api_params(api_params)
     api_url <- paste0(api_url, api_params)
   }
-  .res <- httr::GET(api_url)
-  # this check to see if the website wasn't found (could be simpler)
-  if (httr::http_error(.res)) {
-    if(.res$status == 404) {
-      .err <- "Website not found"
-    } else if (.res$status == 400) {
-      .err <- "Params not availible for entity"
-    } else {
-      .err <- paste0("Error please check the following link
-                     in your browser: ", .res$url)
-    }
-    stop(.err)
-  }
-  .res <- httr::content(.res, as ="text")
-  .res <- jsonlite::fromJSON(api_url)
-  return(.res[[2]])
+  .res <- query_fema(api_url)
+  return(.res)
 }
 #' Get FEMA Open Entity Names
 #'
@@ -68,8 +54,9 @@ get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/o
     }
   }
 }
-
 #' this check to make sure that your extra api commands are valid
+#'
+#' @param params 
 check_api_params <- function(params) {
   api_cmds <- c("callback", "filename", "filter", 
                 "format","inlinecount", "metadata",
@@ -86,6 +73,40 @@ check_api_params <- function(params) {
   return(params)
 }
 
+get_fema_data_all <- function(entity, base_url = "https://www.fema.gov/api/open", api_params = list(),
+                              max_limit = 5000, wait = 1) {
+  api_params[["inlinecount"]] <- "allpages"
+  first_page <- get_fema_data(entity, base_url, api_params)
+  all_data_url <- paste0(gsub("\\/api\\/open", "", base_url), first_page$metadata$url)
+  if(first_page$metadata$count < 1000L) {
+    stop("Not enough records to download try get_fema_data")
+  }
+  skips <- seq(0, first_page$metadata$count, 1000)[seq(0, first_page$metadata$count, 1000) <= max_limit]
+  api_urls <- paste0(all_data_url,"&$skip=", skips)[-1]
+  res <- lapply(api_urls, query_fema, .wait = wait)
+  res <- c(first_page, res)
+  return(res)
+}
+
+query_fema <- function(api_url, .wait = 1) {
+  Sys.sleep(.wait)
+  .res <- httr::GET(api_url)
+# this check to see if the website wasn't found (could be simpler)
+if (httr::http_error(.res)) {
+  if(.res$status == 404) {
+    .err <- "Website not found"
+  } else if (.res$status == 400) {
+    .err <- "Params not availible for entity"
+  } else {
+    .err <- paste0("Error please check the following link
+                     in your browser: ", .res$url)
+  }
+  stop(.err)
+}
+  .res <- httr::content(.res, as ="text")
+  .res <- jsonlite::fromJSON(api_url)
+return(.res)
+}
 # Dont really need this anymore
 # fema_state_codes <- function() {
 # c("AL","AK","AS","AZ","AR","CA","CO","CT","DE","DC","FL","GA","GU","HI",
