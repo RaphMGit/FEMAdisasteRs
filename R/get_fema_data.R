@@ -9,7 +9,7 @@ library("xml2")
 library("httr")
 library("jsonlite")
 library("robotstxt")
-library("ggplot2")
+
 #' example-user must supply entity plus desired api params
 #' get_fema_data("DisasterDeclarationsSummaries")
 #' @title Get FEMA Open API Data
@@ -84,7 +84,7 @@ get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/o
     # entity_table has Entity UC;  entity_table$Entity has spaces between words.
     if(is.na(found)) {
       stop(paste0(entity_table$Entity_API_string, " Entity not found. Here are availible entities:", "\n\n",
-                  paste0(entity_table$Entity_API_string, collapse = "\n")))
+                  paste0(entity_table$Entity_API_string, collapse = "\n"))) #expose input value
     } else {
       return(entity_table[found,])
     }
@@ -112,6 +112,7 @@ check_api_params <- function(params) {
 # columns for plots: state (or fipsStateCode), fyDeclared, incidentType
 # 1) line graph time series, lines represent incident type
 # 2) stacked bar chart by state  or facet wrap by incident type
+# create a new function map_fema_data which gets passed the result data object from get_fema_data
 # PLOTS
 
 # Dont really need this anymore
