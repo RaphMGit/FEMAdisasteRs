@@ -75,11 +75,11 @@ check_api_params <- function(params) {
 
 #' Title
 #'
-#' @param entity 
-#' @param base_url 
-#' @param api_params 
-#' @param max_limit 
-#' @param wait 
+#' @param entity Character. Name of entity to scrape.
+#' @param base_url Character. "https://www.fema.gov/api/open" Website URL or FEMA's API
+#' @param api_params A named list. Extra arguments to pass to API
+#' @param max_limit To load and stop at a certain number. 
+#' @param wait Number of seconds to process the data.
 #'
 #' @return
 #' @export
@@ -102,8 +102,8 @@ get_fema_data_all <- function(entity, base_url = "https://www.fema.gov/api/open"
 
 #' Title
 #'
-#' @param api_url 
-#' @param .wait 
+#' @param api_url Character. Website URL or FEMA's API
+#' @param .wait Number of seconds to process the data.
 #'
 #' @return
 #' @export
