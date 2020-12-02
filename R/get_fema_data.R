@@ -2,7 +2,11 @@
 # GMU team2
 # FEMA was created in April 1979; filter data to 1980 or later by fyDeclared, data type=number
 # api_params <- "filter=fyDeclared gt 1979"
-# update: November 27, 2020 EMC
+# update: December2, 2020 EMC
+# copied in latest format_entity code
+# went down rabbit hole with check_api_params
+# assuming user will format api string, will do in quotes with like this c("cmd1, "cmd2", "cmd3"); 
+# not sure what assumption will be but would like to pass as one arugment a list of strings.
 # How do libraries get loaded in a PKG?
 #library("rvest")
 #library("xml2")
