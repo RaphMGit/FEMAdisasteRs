@@ -4,11 +4,11 @@
 # api_params <- "filter=fyDeclared gt 1979"
 # update: November 27, 2020 EMC
 # How do libraries get loaded in a PKG?
-library("rvest")
-library("xml2")
-library("httr")
-library("jsonlite")
-library("robotstxt")
+#library("rvest")
+#library("xml2")
+#library("httr")
+#library("jsonlite")
+#library("robotstxt")
 
 #' example-user must supply entity plus desired api params
 #' get_fema_data("DisasterDeclarationsSummaries")
@@ -28,7 +28,7 @@ library("robotstxt")
 #' Example:  YourFEMAdata <- get_fema_data(entity,api_params)
 get_fema_data <- function(entity, api_params, base_url = "https://www.fema.gov/api/open") {
   entity_info <- get_fema_entities(entity)
-  api_params <- "filter=fyDeclared gt 1979"
+  api_params <- as.matrix(c("filter=fyDeclared gt 1979"))
   api_url <- paste0(base_url,"/", tolower(entity_info$OpenFEMAAPI), "/", entity_info$Entity_API_string)
   if(length(api_params) != 0) {
     api_params <- check_api_params(api_params)
@@ -63,11 +63,19 @@ get_fema_data <- function(entity, api_params, base_url = "https://www.fema.gov/a
 #'
 #' @examples
 get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/openfema/data-sets", verbose = FALSE) {
-  format_entity <- function(x) {
-    x <- gsub("[^A-z]+", "", tools::toTitleCase(tolower(x)))
-    return(x)
-  }
+#  format_entity <- function(x) {
+#    x <- gsub("[^A-z]+", "", tools::toTitleCase(tolower(x)))
+#    return(x)
+#  }
 # .format_entity function or entity_url is problem; "DisasterDeclarations" and lower Disasterdeclarationsummaries
+    format_entity <- function(x) {
+      
+      if (all(grepl("\\w+\\s+\\w+", x))) {
+        
+        x <- gsub("[^A-z]+", "", tools::toTitleCase(tolower(x)))
+      }
+      return(x)
+    }
   entity_table <- xml2::read_html(entity_url)
   entity_table <- rvest::html_table(entity_table)
   entity_table <- do.call(rbind, entity_table)
@@ -80,7 +88,7 @@ get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/o
     return(entity_table)
   } else {
  #   found <- match(format_entity(entity), entity_table$Entity_API_string)
-    found <- match(entity, entity_table$Entity_API_string)
+    found <- match(format_entity(entity), entity_table$Entity_API_string)
     # entity_table has Entity UC;  entity_table$Entity has spaces between words.
     if(is.na(found)) {
       stop(paste0(entity_table$Entity_API_string, " Entity not found. Here are availible entities:", "\n\n",
@@ -93,20 +101,28 @@ get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/o
 
 #' this check to make sure that your extra api commands are valid
 #' set api_params to one of the api_cmds and it will append url string characters needed.
-check_api_params <- function(params) {
-  api_cmds <- c("callback", "filename", "filter", 
+# changing params to variable api_params - MC
+check_api_params <- function(api_params) {
+  api_cmds <- as.matrix(c("callback", "filename", "filter", 
                 "format","inlinecount", "metadata",
-                "orderby", "select", "skip", "top")
-  if (!all(names(params) %in% api_cmds)) {
-     stop(paste0("Invalid api parameter. Availible parameters are: ", 
+                "orderby", "select", "skip", "top"))
+  # need to left substr REGEX each param up to = here before checking in api_cmds - MC
+  # what if two params are needed by user?
+  params <- sapply(api_params, function(y) {
+      y <- substr(y, 1,regexpr("=",y)-1)
+  })
+  if (!all(params) %in% api_cmds) {
+     stop(paste0(params, " is invalid api parameter. Availible parameters are: ", 
                 paste0(api_cmds, collapse = ";")))
   }
-  params <- lapply(params, function(x) {
+  api_params <- lapply(api_params, function(x) {
    x <-  URLencode(as.character(x), reserved = TRUE)
   })
-  params <- paste0("$", names(params), "=", params)
-  params <- paste0("?", paste0(params, collapse = "&"))
-  return(params)
+  api_params <- paste0("$", names(api_params), "=", api_params)
+  api_params <- paste0("?", paste0(api_params, collapse = "&"))
+  print(api_params)
+  stop()
+  return(api_params)
 }
 # PLOTS   ------------------
 # columns for plots: state (or fipsStateCode), fyDeclared, incidentType
@@ -123,3 +139,8 @@ check_api_params <- function(params) {
 #   "OR","PW","PA","PR","RI","SC","SD","TN","TX","UT","VT","VA","VI","WA",
 #   "WV","WI","WY")
 # }
+# TEST IT
+entity <- "DisasterDeclarationsSummaries"
+
+#api_params <- "invalidparam"
+FEMAdf <- get_fema_data(entity, api_params, )

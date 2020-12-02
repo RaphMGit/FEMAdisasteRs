@@ -7,12 +7,12 @@ entity <- "DisasterDeclarationsSummaries"
 api_params <-  "filter=fyDeclared gt 1979"
 FEMAdf <- get_fema_data(entity, api_params)
 
-library("ggplot2")
-library(RColorBrewer)
+#library("ggplot2")
+#library(RColorBrewer)
 map_fema_data <- function(x) {
-    morecolors = c(brewer.pal(12,"Paired"),"#000000")
-    MapGG <- ggplot(FEMAdf, aes(state),fill=incidentType) + geom_bar(aes(fill=FEMAdf$incidentType), position=position_stack(), show.legend=TRUE) + 
-        scale_fill_manual(values = morecolors)
+    morecolors = c(RColorBrewer::brewer.pal(12,"Paired"),"#000000")
+    MapGG <- ggplot2::ggplot(FEMAdf, aes(state),fill=incidentType) + ggplot2::geom_bar(aes(fill=FEMAdf$incidentType), position=position_stack(), show.legend=TRUE) + 
+        ggplot2::scale_fill_manual(values = morecolors)
     return(MapGG)
     } 
    
