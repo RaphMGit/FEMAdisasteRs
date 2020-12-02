@@ -24,7 +24,7 @@ get_fema_data <- function(entity, base_url = "https://www.fema.gov/api/open", ap
 #' @param entity Character. Name of entity to scrape.
 #' @param entity_url Character. "https://www.fema.gov/about/openfema/data-sets" (default),
 #' Website containing FEMA entity names
-#' @param verbose Logical. `FALSE`(default), should all availible entities be returned?
+#' @param verbose Logical. `FALSE`(default), should all available entities be returned?
 #'
 #' @return
 #' @export
@@ -73,6 +73,18 @@ check_api_params <- function(params) {
   return(params)
 }
 
+#' Title
+#'
+#' @param entity 
+#' @param base_url 
+#' @param api_params 
+#' @param max_limit 
+#' @param wait 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_fema_data_all <- function(entity, base_url = "https://www.fema.gov/api/open", api_params = list(),
                               max_limit = 5000, wait = 1) {
   api_params[["inlinecount"]] <- "allpages"
@@ -88,6 +100,15 @@ get_fema_data_all <- function(entity, base_url = "https://www.fema.gov/api/open"
   return(res)
 }
 
+#' Title
+#'
+#' @param api_url 
+#' @param .wait 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 query_fema <- function(api_url, .wait = 1) {
   Sys.sleep(.wait)
   .res <- httr::GET(api_url)
