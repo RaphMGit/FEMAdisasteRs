@@ -32,7 +32,9 @@ get_fema_data <- function(entity, base_url = "https://www.fema.gov/api/open", ap
 #' @examples
 get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/openfema/data-sets", verbose = FALSE) {
   .format_entity <- function(x) {
-    x <- gsub("[^A-z]+", "", tools::toTitleCase(tolower(x)))
+    if (all(grepl("\\w+\\s+\\w+", x))) {
+      x <- gsub("[^A-z]+", "", tools::toTitleCase(tolower(x)))
+    }
     return(x)
   }
   entity_table <- xml2::read_html(entity_url)
