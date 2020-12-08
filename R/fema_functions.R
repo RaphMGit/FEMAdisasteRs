@@ -128,7 +128,7 @@ check_api_params <- function(.api_params) {
 get_fema_data_all <- function(entity, api_params = list(),
                               max_limit = 5000, wait = 1, base_url = "https://www.fema.gov/api/open") {
   api_params[["inlinecount"]] <- "allpages"
-  first_page <- get_fema_data(entity, base_url, api_params)
+  first_page <- get_fema_data(entity, api_params, base_url)
   all_data_url <- paste0(gsub("\\/api\\/open", "", base_url), first_page$metadata$url)
   if (first_page$metadata$count < 1000L) {
     stop("Not enough records to download try get_fema_data")
