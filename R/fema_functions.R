@@ -118,28 +118,47 @@ check_api_params <- function(.api_params) {
 #' Get FEMA Open API All Data
 #'
 #' @inheritParams get_fema_data
-#' @param max_limit To load and stop at a certain number.
+#' @param max_limit To load and stop at a certain number. Default(Null). If
 #' @param wait Number of seconds to process the data.
 #'
-#' @return
+#' @return Dataframe of all data from entity. If
 #' @export
 #'
 #' @examples
+#' # get all data from Disaster Declarations  where fiscal year is greater than 1979
+#' all_data <- get_fema_data_all("Disaster Declarations Summaries", 
+#'             api_params = list(filter = "fyDeclared gt 1979"))
+#' # convert all data to single data frame
+#' all_data_df <- lapply(all_data, function(x) {
+#'  x <- x[[2]]
+#' })
+#' 
+#' all_data_df <- do.call(rbind, all_data_df)
+all_data_df <- do.call(rbind, all_data_df)
 get_fema_data_all <- function(entity, api_params = list(),
-                              max_limit = 5000, wait = 1, base_url = "https://www.fema.gov/api/open") {
+                              max_limit = NULL, wait = 1, base_url = "https://www.fema.gov/api/open") {
   api_params[["inlinecount"]] <- "allpages"
-  first_page <- get_fema_data(entity, base_url, api_params)
+  if ("skip" %in% names(api_params)) {
+    .skip_start <- api_params[["skip"]]
+    api_params <- api_params[!names(api_params) %in% "skip"]
+  } else {
+    .skip_start <- 0L
+  }
+  first_page <- get_fema_data(entity,  api_params, base_url)
   all_data_url <- paste0(gsub("\\/api\\/open", "", base_url), first_page$metadata$url)
   if (first_page$metadata$count < 1000L) {
     stop("Not enough records to download try get_fema_data")
   }
-  skips <- seq(0, first_page$metadata$count, 1000)[seq(0, first_page$metadata$count, 1000) <= max_limit]
+  if (is.null(max_limit)) {
+    max_limit <- first_page$metadata$count
+  }
+  skips <- seq(.skip_start, first_page$metadata$count, 1000)[seq(.skip_start, first_page$metadata$count, 1000) <= max_limit]
   api_urls <- paste0(all_data_url, "&$skip=", skips)[-1]
   res <- lapply(api_urls, query_fema, .wait = wait)
-  res <- c(first_page, res)
+  # test
+  res <- c(list(first_page), res)
   return(res)
 }
-
 #' Title
 #'
 #' @param api_url Character. Website URL or FEMA's API
