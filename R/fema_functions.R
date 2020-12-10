@@ -1,4 +1,4 @@
-#' Get FEMA Open API Data
+#' @title Get FEMA Open API Data
 #'
 #' @param entity Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
 #'  documentation for details.
@@ -33,9 +33,9 @@ get_fema_data <- function(entity, api_params = list(), base_url = "https://www.f
   .res <- query_fema(api_url)
   return(.res)
 }
-#' Get FEMA Open Entity Names
+#' @title Get FEMA Open Entity Names
 #'
-#' @param entity Character. Name of entity to scrape.
+#' @inheritParams get_fema_data
 #' @param entity_url Character. "https://www.fema.gov/about/openfema/data-sets" (default),
 #' Website containing FEMA entity names
 #' @param verbose Logical. `FALSE`(default), should all available entities be returned?
@@ -122,7 +122,6 @@ check_api_params <- function(.api_params) {
 #' @param wait Number of seconds to process the data.
 #'
 #' @return Dataframe of all data from entity. If
-#' @export
 #'
 #' @examples
 #' # get all data from Disaster Declarations  where fiscal year is greater than 1979
@@ -134,6 +133,7 @@ check_api_params <- function(.api_params) {
 #' })
 #' 
 #' all_data_df <- do.call(rbind, all_data_df)
+#' @export
 all_data_df <- do.call(rbind, all_data_df)
 get_fema_data_all <- function(entity, api_params = list(),
                               max_limit = NULL, wait = 1, base_url = "https://www.fema.gov/api/open") {
@@ -145,6 +145,7 @@ get_fema_data_all <- function(entity, api_params = list(),
     .skip_start <- 0L
   }
   first_page <- get_fema_data(entity,  api_params, base_url)
+  first_page <- get_fema_data(entity, api_params, base_url)
   all_data_url <- paste0(gsub("\\/api\\/open", "", base_url), first_page$metadata$url)
   if (first_page$metadata$count < 1000L) {
     stop("Not enough records to download try get_fema_data")
@@ -159,14 +160,14 @@ get_fema_data_all <- function(entity, api_params = list(),
   res <- c(list(first_page), res)
   return(res)
 }
-#' Title
+#' @title Query FEMA helper
 #'
 #' @param api_url Character. Website URL or FEMA's API
 #' @param .wait Number of seconds to process the data.
 #'
 #' @return
 #' @export
-#'
+#' @imports httr jsonlite
 #' @examples
 query_fema <- function(api_url, .wait = 1) {
   Sys.sleep(.wait)
