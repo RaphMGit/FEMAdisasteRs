@@ -41,9 +41,12 @@ get_fema_data <- function(entity, api_params = list(), base_url = "https://www.f
 #' @param verbose Logical. `FALSE`(default), should all available entities be returned?
 #'
 #' @return
+#' @import tools, xml2, rvest 
 #' @export
 #'
-#' @examples
+#' @examples 
+#' get_fema_entities("FEMA Web Disasters", )
+#' 
 get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/openfema/data-sets", verbose = FALSE) {
   .format_entity <- function(x) {
     if (all(grepl("^[a-z]+$|^[A-Z]+$", x))) {
@@ -76,7 +79,8 @@ get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/o
     }
   }
 }
-#' Validate API parameters
+
+#' @title Validate API parameters
 #'
 #' @param .api_params Named list taken from \code{api_params} argument in
 #' \code{\link{get_fema_data}} \code{\link{get_fema_data_all}}
@@ -115,7 +119,8 @@ check_api_params <- function(.api_params) {
   .api_params <- paste0("?", paste0(.api_params, collapse = "&"))
   return(.api_params)
 }
-#' Get FEMA Open API All Data
+
+#' @title Get FEMA Open API All Data
 #'
 #' @inheritParams get_fema_data
 #' @param max_limit To load and stop at a certain number. Default(Null). If
@@ -160,15 +165,18 @@ get_fema_data_all <- function(entity, api_params = list(),
   res <- c(list(first_page), res)
   return(res)
 }
+
 #' @title Query FEMA helper
 #'
 #' @param api_url Character. Website URL or FEMA's API
 #' @param .wait Number of seconds to process the data.
 #'
-#' @return
+#' @return 
 #' @export
-#' @imports httr jsonlite
+#' @import httr jsonlite
 #' @examples
+#' 
+#' query_fema("https://www.fema.gov/about/openfema/api", .wait)
 query_fema <- function(api_url, .wait = 1) {
   Sys.sleep(.wait)
   .res <- httr::GET(api_url)
