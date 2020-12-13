@@ -45,7 +45,7 @@ get_fema_data <- function(entity, api_params = list(), base_url = "https://www.f
 #' @export
 #'
 #' @examples 
-#' get_fema_entities("FEMA Web Disasters", )
+#' get_fema_entities("FEMA Web Disasters", "https://www.fema.gov/api/open/v1/FemaWebDisasterSummaries", verbose = FALSE)
 #' 
 get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/openfema/data-sets", verbose = FALSE) {
   .format_entity <- function(x) {
