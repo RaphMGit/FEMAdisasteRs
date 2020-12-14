@@ -1,7 +1,8 @@
 # FEMAdisasteRs
 
-***Authors*** Martin Chamberlin, Aliscia Warren, & Raphael Manalo
+***Authors:*** __Martin Chamberlin, Aliscia Warren, & Raphael Manalo__
 
+## Setup
 You can install FEMAdisasteRs from [GitHub](https://github.com/) with:
 
 ``` r
@@ -9,6 +10,7 @@ You can install FEMAdisasteRs from [GitHub](https://github.com/) with:
 devtools::install_github("RaphMGit/FEMAdisasteRs")
 ```
 
+## General Info
 FEMAdisasteRs is an R package that looks at declared disasters on the Federal Emergency Management Agency (FEMA) website. Through numerous decades of data, this package can allow the user to analyze, organize, and observe the FEMA data.
 
 For more information on FEMA, please take a look at their website: [FEMA](https://www.fema.gov/)
