@@ -6,7 +6,9 @@
 #' @param by Optional Character string. Column name in \code{df} to be used as fill.
 #' incidentType by default.
 #'
-#' @return A stacked \code{\link{[ggplot2](geom_bar)}}
+#' @return A stacked \code{geom_bar} from \code{ggplot2}
+#' 
+#' @seealso \code{\link[ggplot2]{geom_bar}}
 #'
 #' @examples
 #' \dontrun{

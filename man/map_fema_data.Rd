@@ -16,7 +16,7 @@ map_fema_data(df, x_var = "state", by = "incidentType")
 incidentType by default.}
 }
 \value{
-A stacked \code{\link{[ggplot2](geom_bar)}}
+A stacked \code{geom_bar} from \code{ggplot2}
 }
 \description{
 Map FEMA data to Stacked Bar
@@ -35,5 +35,7 @@ map_fema_data(FEMAdf[[2]])
 
 }
 \seealso{
+\code{\link[ggplot2]{geom_bar}}
+
 \code{\link{get_fema_data}} \code{\link{get_fema_data_all}} for getting fema data
 }

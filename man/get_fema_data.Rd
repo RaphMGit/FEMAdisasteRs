@@ -27,13 +27,13 @@ A function to return 1000 records from a FEMA data entity \href{https://www.fema
 }
 \examples{
 \dontrun{
-## Get first 1000 records from FEMA Web Disasters
+# Get first 1000 records from FEMA Web Disasters
 get_fema_data("FEMA Web Disasters", api_params = list(skip = 1000))
 
-## Get first 1000 records from FEMA Web Disasters after skipping first 1000 records
+# Get first 1000 records from FEMA Web Disasters after skipping first 1000 records
 get_fema_data("FEMA Web Disasters", api_params = list(skip = 1000))
 
-## Get first 1000 records ordered by state from Disaster Declarations Summaries after skipping first 1000 records
+# Skip 1000 and return 1000 records ordered by state from Disaster Declarations Summaries
 get_fema_data("Disaster Declarations Summaries",
   api_params = list(orderby = state, skip = 1000)
 }
