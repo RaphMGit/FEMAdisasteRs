@@ -16,7 +16,7 @@ get_fema_data_all(
 \item{entity}{Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
 documentation for details.}
 
-\item{api_params}{Optional. Named list. Extra arguments to pass to api. See \url{https://www.fema.gov/about/openfema/api}.
+\item{api_params}{Optional. Named list. Extra arguments to pass to api.
 Parameters are validated using the \code{\link{check_api_params}} function.}
 
 \item{max_limit}{Optional. Numeric. Single number of maximum cases to return. If default (\code{Null}),
@@ -24,7 +24,7 @@ return all records.}
 
 \item{wait}{Number of seconds to process the data.}
 
-\item{base_url}{Optional. Character. "https://www.fema.gov/api/open" (default),  website Url of FEMAs API.}
+\item{base_url}{Optional. Character string representing website Url of openFEMA API. By default is \code{https://www.fema.gov/api/open}.}
 }
 \value{
 A list of data and meta information see \code{examples} for more details.

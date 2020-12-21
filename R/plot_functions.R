@@ -3,7 +3,7 @@
 #' @param df Required. Data.frame created by \code{\link{get_fema_data}} or
 #' \code{\link{get_fema_data_all}}
 #' @param x_var Optional Character string. Column name in \code{df} to be placed on x axis. state by default.
-#' @param by  Optional Character string. Column name in \code{df} to be used as fill.
+#' @param by Optional Character string. Column name in \code{df} to be used as fill.
 #' incidentType by default.
 #'
 #' @return A stacked \code{\link{[ggplot2](geom_bar)}}

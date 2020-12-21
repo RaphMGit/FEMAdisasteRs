@@ -1,17 +1,17 @@
 #' @title Get FEMA Open API Data
 #' 
-#' @description A function to return 1000 records from a FEMA data entity \href{[Click here for more details](https://www.fema.gov/api/open)}
+#' @description A function to return 1000 records from a FEMA data entity \href{https://www.fema.gov/api/open}{openFEMA api}
 #' 
 #' @param entity Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
 #'  documentation for details.
-#' @param api_params Optional. Named list. Extra arguments to pass to api. See \url{https://www.fema.gov/about/openfema/api}.
+#' @param api_params Optional. Named list. Extra arguments to pass to api.
 #' Parameters are validated using the \code{\link{check_api_params}} function.
-#' @param base_url Optional. Character. "https://www.fema.gov/api/open" (default),  website Url of FEMAs API.
+#' @param base_url Optional. Character string representing website Url of openFEMA API. By default is \code{https://www.fema.gov/api/open}.  
 #'
 #' @return A dataset taken from \url{https://www.fema.gov/api/open}
 #'
 #' @family get_data
-#' @seealso \code{\link{get_fema_entites}} \code{\link{get_fema_data_all}}
+#' @seealso \url{https://www.fema.gov/about/openfema/api}
 #' 
 #' @examples
 #' \dontrun{
@@ -36,6 +36,60 @@ get_fema_data <- function(entity, api_params = list(), base_url = "https://www.f
   .res <- query_fema(api_url)
   return(.res)
 }
+
+#' @title Get FEMA Open API All Data
+#' 
+#' @description Wrapper around \code{\link{get_fema_data}}, however, provides the ability to return more than
+#'     1000 records.
+#'
+#' @inheritParams get_fema_data
+#' @param max_limit Optional. Numeric. Single number of maximum cases to return. If default (\code{Null}),
+#'    return all records.
+#' @param wait Number of seconds to process the data.
+#'
+#' @return A list of data and meta information see \code{examples} for more details.
+#'
+#' @family get_data
+#'
+#' @examples
+#' \dontrun{
+#' # get all data from Disaster Declarations  where fiscal year is greater than 1979
+#' all_data <- get_fema_data_all("Disaster Declarations Summaries", 
+#'             api_params = list(filter = "fyDeclared gt 1979"))
+#' # convert all data to single data frame
+#' all_data_df <- lapply(all_data, function(x) {
+#'  x <- x[[2]]
+#' })
+#' 
+#' all_data_df <- do.call(rbind, all_data_df)
+#' }
+#' @export
+get_fema_data_all <- function(entity, api_params = list(),
+                              max_limit = NULL, wait = 1, base_url = "https://www.fema.gov/api/open") {
+  api_params[["inlinecount"]] <- "allpages"
+  if ("skip" %in% names(api_params)) {
+    .skip_start <- api_params[["skip"]]
+    api_params <- api_params[!names(api_params) %in% "skip"]
+  } else {
+    .skip_start <- 0L
+  }
+  first_page <- get_fema_data(entity,  api_params, base_url)
+  first_page <- get_fema_data(entity, api_params, base_url)
+  all_data_url <- paste0(gsub("\\/api\\/open", "", base_url), first_page$metadata$url)
+  if (first_page$metadata$count < 1000L) {
+    stop("Not enough records to download try get_fema_data")
+  }
+  if (is.null(max_limit)) {
+    max_limit <- first_page$metadata$count
+  }
+  skips <- seq(.skip_start, first_page$metadata$count, 1000)[seq(.skip_start, first_page$metadata$count, 1000) <= max_limit]
+  api_urls <- paste0(all_data_url, "&$skip=", skips)[-1]
+  res <- lapply(api_urls, query_fema, .wait = wait)
+  # test
+  res <- c(list(first_page), res)
+  return(res)
+}
+
 #' @title Get FEMA Open Entity Names
 #' 
 #' @description A function to return a list of FEMA entities available to query.
@@ -43,7 +97,7 @@ get_fema_data <- function(entity, api_params = list(), base_url = "https://www.f
 #'
 #' @inheritParams get_fema_data
 #' @param entity_url Optional. Character. A url string of the website containing FEMA entity names.
-#'     The default value is \code{"https://www.fema.gov/about/openfema/data-sets}
+#'     The default value is \code{https://www.fema.gov/about/openfema/data-sets}
 #' @param verbose Logical. If \code{FALSE} (default), will provide information about \code{entity}. If \code{TRUE}, will return
 #'     all possible entities.
 #'
@@ -132,64 +186,11 @@ check_api_params <- function(.api_params) {
     }
   }
   .api_params <- lapply(.api_params, function(x) {
-    x <- URLencode(as.character(x), reserved = TRUE)
+    x <- utils::URLencode(as.character(x), reserved = TRUE)
   })
   .api_params <- paste0("$", names(.api_params), "=", .api_params)
   .api_params <- paste0("?", paste0(.api_params, collapse = "&"))
   return(.api_params)
-}
-
-#' @title Get FEMA Open API All Data
-#' 
-#' @description Wrapper around \code{\link{get_fema_data}}, however, provides the ability to return more than
-#'     1000 records.
-#'
-#' @inheritParams get_fema_data
-#' @param max_limit Optional. Numeric. Single number of maximum cases to return. If default (\code{Null}),
-#'    return all records.
-#' @param wait Number of seconds to process the data.
-#'
-#' @return A list of data and meta information see \code{examples} for more details.
-#'
-#' @family get_data
-#'
-#' @examples
-#' \dontrun{
-#' # get all data from Disaster Declarations  where fiscal year is greater than 1979
-#' all_data <- get_fema_data_all("Disaster Declarations Summaries", 
-#'             api_params = list(filter = "fyDeclared gt 1979"))
-#' # convert all data to single data frame
-#' all_data_df <- lapply(all_data, function(x) {
-#'  x <- x[[2]]
-#' })
-#' 
-#' all_data_df <- do.call(rbind, all_data_df)
-#' }
-#' @export
-get_fema_data_all <- function(entity, api_params = list(),
-                              max_limit = NULL, wait = 1, base_url = "https://www.fema.gov/api/open") {
-  api_params[["inlinecount"]] <- "allpages"
-  if ("skip" %in% names(api_params)) {
-    .skip_start <- api_params[["skip"]]
-    api_params <- api_params[!names(api_params) %in% "skip"]
-  } else {
-    .skip_start <- 0L
-  }
-  first_page <- get_fema_data(entity,  api_params, base_url)
-  first_page <- get_fema_data(entity, api_params, base_url)
-  all_data_url <- paste0(gsub("\\/api\\/open", "", base_url), first_page$metadata$url)
-  if (first_page$metadata$count < 1000L) {
-    stop("Not enough records to download try get_fema_data")
-  }
-  if (is.null(max_limit)) {
-    max_limit <- first_page$metadata$count
-  }
-  skips <- seq(.skip_start, first_page$metadata$count, 1000)[seq(.skip_start, first_page$metadata$count, 1000) <= max_limit]
-  api_urls <- paste0(all_data_url, "&$skip=", skips)[-1]
-  res <- lapply(api_urls, query_fema, .wait = wait)
-  # test
-  res <- c(list(first_page), res)
-  return(res)
 }
 
 #' @title Query FEMA helper

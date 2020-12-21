@@ -15,7 +15,7 @@ get_fema_entities(
 documentation for details.}
 
 \item{entity_url}{Optional. Character. A url string of the website containing FEMA entity names.
-The default value is \code{"https://www.fema.gov/about/openfema/data-sets}}
+The default value is \code{https://www.fema.gov/about/openfema/data-sets}}
 
 \item{verbose}{Logical. If \code{FALSE} (default), will provide information about \code{entity}. If \code{TRUE}, will return
 all possible entities.}

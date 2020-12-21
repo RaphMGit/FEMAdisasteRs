@@ -14,16 +14,16 @@ get_fema_data(
 \item{entity}{Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
 documentation for details.}
 
-\item{api_params}{Optional. Named list. Extra arguments to pass to api. See \url{https://www.fema.gov/about/openfema/api}.
+\item{api_params}{Optional. Named list. Extra arguments to pass to api.
 Parameters are validated using the \code{\link{check_api_params}} function.}
 
-\item{base_url}{Optional. Character. "https://www.fema.gov/api/open" (default),  website Url of FEMAs API.}
+\item{base_url}{Optional. Character string representing website Url of openFEMA API. By default is \code{https://www.fema.gov/api/open}.}
 }
 \value{
 A dataset taken from \url{https://www.fema.gov/api/open}
 }
 \description{
-A function to return 1000 records from a FEMA data entity \href{\href{https://www.fema.gov/api/open}{Click here for more details}}
+A function to return 1000 records from a FEMA data entity \href{https://www.fema.gov/api/open}{openFEMA api}
 }
 \examples{
 \dontrun{
@@ -39,7 +39,7 @@ get_fema_data("Disaster Declarations Summaries",
 }
 }
 \seealso{
-\code{\link{get_fema_entites}} \code{\link{get_fema_data_all}}
+\url{https://www.fema.gov/about/openfema/api}
 
 Other get_data: 
 \code{\link{get_fema_data_all}()},
