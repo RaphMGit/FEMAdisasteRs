@@ -1,16 +1,20 @@
 #' @title Get FEMA Open API Data
-#'
-#' @param entity Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
+#' 
+#' @description A function to return 1000 records from a FEMA data entity \href{[Click here for more details](https://www.fema.gov/api/open)}
+#' 
+#' @param entity Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
 #'  documentation for details.
-#' @param api_params Named list. Extra arguments to pass to api. See \url{https://www.fema.gov/about/openfema/api}.
+#' @param api_params Optional. Named list. Extra arguments to pass to api. See \url{https://www.fema.gov/about/openfema/api}.
 #' Parameters are validated using the \code{\link{check_api_params}} function.
-#' @param base_url Character. "https://www.fema.gov/api/open" (default),  website Url of FEMAs API.
+#' @param base_url Optional. Character. "https://www.fema.gov/api/open" (default),  website Url of FEMAs API.
 #'
 #' @return A dataset taken from \url{https://www.fema.gov/api/open}
 #'
+#' @family get_data
 #' @seealso \code{\link{get_fema_entites}} \code{\link{get_fema_data_all}}
+#' 
 #' @examples
-#'
+#' \dontrun{
 #' ## Get first 1000 records from FEMA Web Disasters
 #' get_fema_data("FEMA Web Disasters", api_params = list(skip = 1000))
 #'
@@ -20,8 +24,7 @@
 #' ## Get first 1000 records ordered by state from Disaster Declarations Summaries after skipping first 1000 records
 #' get_fema_data("Disaster Declarations Summaries",
 #'   api_params = list(orderby = state, skip = 1000)
-#' )
-#' @import httr
+#' }
 #' @export
 get_fema_data <- function(entity, api_params = list(), base_url = "https://www.fema.gov/api/open") {
   entity_info <- get_fema_entities(entity)
@@ -34,19 +37,27 @@ get_fema_data <- function(entity, api_params = list(), base_url = "https://www.f
   return(.res)
 }
 #' @title Get FEMA Open Entity Names
+#' 
+#' @description A function to return a list of FEMA entities available to query.
+#'    Scrapes \url{https://www.fema.gov/about/openfema/data-sets} for most up-to-date entity names.
 #'
 #' @inheritParams get_fema_data
-#' @param entity_url Character. "https://www.fema.gov/about/openfema/data-sets" (default),
-#' Website containing FEMA entity names
-#' @param verbose Logical. `FALSE`(default), should all available entities be returned?
+#' @param entity_url Optional. Character. A url string of the website containing FEMA entity names.
+#'     The default value is \code{"https://www.fema.gov/about/openfema/data-sets}
+#' @param verbose Logical. If \code{FALSE} (default), will provide information about \code{entity}. If \code{TRUE}, will return
+#'     all possible entities.
 #'
-#' @return
-#' @import tools, xml2, rvest 
-#' @export
+#' @return If \code{verbose = TRUE} will return a data.frame of all entity names.
+#'
+#' @family get_data
+#'
 #'
 #' @examples 
-#' get_fema_entities("FEMA Web Disasters", "https://www.fema.gov/api/open/v1/FemaWebDisasterSummaries", verbose = FALSE)
-#' 
+#' \dontrun{
+#' # Return list of FEMA entities to query
+#' get_fema_entities(verbose = TRUE)
+#' }
+#' @export
 get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/openfema/data-sets", verbose = FALSE) {
   .format_entity <- function(x) {
     if (all(grepl("^[a-z]+$|^[A-Z]+$", x))) {
@@ -81,9 +92,17 @@ get_fema_entities <- function(entity, entity_url = "https://www.fema.gov/about/o
 }
 
 #' @title Validate API parameters
-#'
+#' 
+#' @details Not meant for interactive use. Helper function used within \code{\link{get_fema_data_all}} and
+#'     \code{\link{get_fema_data_all}}
+#'     
 #' @param .api_params Named list taken from \code{api_params} argument in
 #' \code{\link{get_fema_data}} \code{\link{get_fema_data_all}}
+#' 
+#' @family helpers
+#' 
+#' @seealso \code{\link{get_fema_data}} \code{\link{get_fema_data_all}}
+#' 
 #' @export
 check_api_params <- function(.api_params) {
   if (!inherits(.api_params, "list")) {
@@ -121,14 +140,21 @@ check_api_params <- function(.api_params) {
 }
 
 #' @title Get FEMA Open API All Data
+#' 
+#' @description Wrapper around \code{\link{get_fema_data}}, however, provides the ability to return more than
+#'     1000 records.
 #'
 #' @inheritParams get_fema_data
-#' @param max_limit To load and stop at a certain number. Default(Null). If
+#' @param max_limit Optional. Numeric. Single number of maximum cases to return. If default (\code{Null}),
+#'    return all records.
 #' @param wait Number of seconds to process the data.
 #'
-#' @return Dataframe of all data from entity. If
+#' @return A list of data and meta information see \code{examples} for more details.
+#'
+#' @family get_data
 #'
 #' @examples
+#' \dontrun{
 #' # get all data from Disaster Declarations  where fiscal year is greater than 1979
 #' all_data <- get_fema_data_all("Disaster Declarations Summaries", 
 #'             api_params = list(filter = "fyDeclared gt 1979"))
@@ -138,8 +164,8 @@ check_api_params <- function(.api_params) {
 #' })
 #' 
 #' all_data_df <- do.call(rbind, all_data_df)
+#' }
 #' @export
-all_data_df <- do.call(rbind, all_data_df)
 get_fema_data_all <- function(entity, api_params = list(),
                               max_limit = NULL, wait = 1, base_url = "https://www.fema.gov/api/open") {
   api_params[["inlinecount"]] <- "allpages"
@@ -167,16 +193,16 @@ get_fema_data_all <- function(entity, api_params = list(),
 }
 
 #' @title Query FEMA helper
+#' @inherit check_api_params details
 #'
 #' @param api_url Character. Website URL or FEMA's API
-#' @param .wait Number of seconds to process the data.
+#' @param .wait Number of seconds to process the data. If default, will wait 1 second between api calls.
 #'
-#' @return 
+#' @return API response from \url{https://www.fema.gov/api/open}
+#'
+#' @family helpers
+#'   
 #' @export
-#' @import httr jsonlite
-#' @examples
-#' 
-#' query_fema("https://www.fema.gov/about/openfema/api", .wait)
 query_fema <- function(api_url, .wait = 1) {
   Sys.sleep(.wait)
   .res <- httr::GET(api_url)

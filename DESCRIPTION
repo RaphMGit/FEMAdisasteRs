@@ -1,0 +1,30 @@
+Package: FEMAdisasteRs
+Title: R package used to gather data from FEMA's API
+Version: 0.0.0.9000
+Authors@R: 
+    c(
+    person(given = "Raphael",
+           family = "Manalo",
+           email = "rmanalo@masonlive.gmu.edu",
+           role = c("aut")),
+    person(given = "Aliscia",
+           family = "Warren",
+           email = "awarre2o@masonlive.gmu.edu",
+           role = c("aut")),
+    person(given = "Martin",
+           family = "Chamberlin",
+           email = "echambe@masonlive.gmu.edu",
+           role = c("aut")),
+    person(given = "Shea",
+           family = "Fyffe",
+           email = "sfyffe@masonlive.gmu.edu",
+           role = c("cre"))
+           )
+Description: This R package provides a series of useful functions, which allows for a streamlined way to export
+   disaster and FEMA related data. The package is focus on providing data from FEMA, which is useful for an assortment
+   of downstream tasks (e.g., plotting, analysis, reporting).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
