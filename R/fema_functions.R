@@ -2,7 +2,7 @@
 #' 
 #' @description A function to return 1000 records from a FEMA data entity \href{https://www.fema.gov/api/open}{openFEMA api}
 #' 
-#' @param entity Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
+#' @param entity Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entities}}
 #'  documentation for details.
 #' @param api_params Optional. Named list. Extra arguments to pass to api.
 #' Parameters are validated using the \code{\link{check_api_params}} function.

@@ -13,7 +13,7 @@ get_fema_data_all(
 )
 }
 \arguments{
-\item{entity}{Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
+\item{entity}{Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entities}}
 documentation for details.}
 
 \item{api_params}{Optional. Named list. Extra arguments to pass to api.

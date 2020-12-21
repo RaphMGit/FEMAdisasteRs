@@ -11,7 +11,7 @@ get_fema_entities(
 )
 }
 \arguments{
-\item{entity}{Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entites}}
+\item{entity}{Required. Character. Name of entity to scrape. See function \code{\link{get_fema_entities}}
 documentation for details.}
 
 \item{entity_url}{Optional. Character. A url string of the website containing FEMA entity names.
